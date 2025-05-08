@@ -1,0 +1,9 @@
+package banking_sys;
+import banking_sys.Bank_System.*;
+public class Main {
+    public static void main(String[] args) {
+        View view = new View();
+        view.call();
+    }
+    
+}
