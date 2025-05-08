@@ -1,0 +1,69 @@
+package banking_sys.DBO;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Customer  {
+    private int customer_id;
+    private String name;
+    private int acc_no;
+    private int balance;
+    private String current_password;
+    private String encrypt_c_pass;
+    
+    
+    
+    protected Customer(){}
+
+    protected Customer(int customer_id,String name,int acc_no,int balance, String current_password ){
+        
+        this.customer_id=customer_id;
+        this.name=name;
+        this.acc_no=acc_no;
+        this.balance=balance;
+        this.current_password=current_password;
+    }
+    public void setCustomer_id(int customer_id) {
+        this.customer_id = customer_id;
+    }
+    public int getCustomer_id() {
+        return customer_id;
+    }
+
+    public void set_name(String name){
+        this.name = name;
+    }
+    public String get_name(){
+        return name;
+    }
+
+    public void setacc_no(int acc_no){
+        this.acc_no = acc_no;
+    }
+    public int getacc_no(){
+        return acc_no;
+    }
+
+    public void setbalance(int balance){
+        this.balance = balance;
+    }
+    public int getbalance(){
+        return balance;
+    }
+
+    public void setcurrent_password(String current_password){
+        this.current_password = current_password;
+    }
+    public String getcurrent_password(){
+        return current_password;
+    }
+
+    public void setencrypt_c_pass(String encrypt_c_pass){
+        this.encrypt_c_pass = encrypt_c_pass;
+    }
+    public String getencrypt_c_pass(){
+        return encrypt_c_pass;
+    }
+
+    
+}
