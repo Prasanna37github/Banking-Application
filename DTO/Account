@@ -1,0 +1,43 @@
+package banking_sys.DBO;
+import java.util.*;
+
+public class Account extends Customer{
+    private int t_id=0;
+    private int transaction_count=1;
+    private List<String> pass_history = new ArrayList<>();
+    private List<String> transaction_history = new ArrayList<>();
+    
+    public Account(int c_id, String name, int acc_no, int balance, String current_password) {
+        super(c_id, name, acc_no, balance, current_password);
+    }
+
+    public List<String> getPass_history() {
+        return pass_history;
+    }
+
+    public List<String> gettransaction_history() {
+        return transaction_history;
+    }
+
+    public int get_tc(){
+        return transaction_count;
+    }
+    public void add_transaction_history(String type, String Amount, String Balance){
+        transaction_history.add(Integer.toString(++t_id));
+        transaction_history.add(type);
+        transaction_history.add(Amount);
+        transaction_history.add(Balance);
+    }
+    public void increment(){
+        transaction_count++;
+    }
+    public void addpassword() {
+            pass_history.add(super.getcurrent_password());
+        
+    }
+    public void transfer(int amount){
+        int b = super.getbalance();
+        super.setbalance(b+amount);
+        System.out.println("successfully amount transfer!!");
+    }
+}
