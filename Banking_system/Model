@@ -1,0 +1,337 @@
+package banking_sys.Bank_System;
+import banking_sys.Repository.Initialitation;
+import banking_sys.DBO.Account;
+import banking_sys.Bank_System.*;
+import java.util.*;
+
+public class Model {
+    Initialitation init = Initialitation.getinstance();
+
+    View view;
+    public Model(View view){
+        this.view = view;
+    }
+    int flag=0;
+    int cid=11;  
+    int accno=110000;
+    Scanner s = new Scanner(System.in);
+
+    public void addcustomer(){
+        System.out.println("enter name:");
+        String name = s.nextLine();
+        while(true){
+            System.out.println("enter password");
+            String passwrd1 = s.nextLine();
+            System.out.println("re-enter password");
+            String passwrd2 = s.nextLine();
+            if(passwrd1.equals(passwrd2)){
+                if ((checkpass(passwrd1))){
+                    insert(name,passwrd1);
+                    break;
+                }
+                else{
+                    System.out.println("password is not strong");
+                    System.out.println("so,please reenter the password!!");
+                }
+            }
+            else{
+                System.out.println("re enter password is incorrect!!");
+            }
+    }
+    }
+
+    public Boolean checkpass(String p){
+        int lowercount=0;
+        int highercount=0;
+        int numcount=0;
+        if(p.length()<6)
+            return false;
+        for(char a : p.toCharArray()){
+            if(Character.isLowerCase(a))
+            lowercount++;
+            if(Character.isUpperCase(a))
+            highercount++;
+            if(Character.isDigit(a))
+            numcount++;
+        }
+        if( lowercount>=2 && highercount>=2 && numcount>=2)
+            return true;
+        return false;
+
+    }
+
+    public void insert(String name, String passwrd){
+        Account addaccount = new Account(cid, name,accno+cid, 10000, passwrd);
+        init.accountlist.add(addaccount); 
+        System.out.println("Successfully added!!");
+        System.out.println("Name :"+name);
+        System.out.println("Customer id :"+cid);
+        System.out.println("Account no :"+(accno+cid));
+        System.out.println("Account initial balance :"+10000);
+        System.out.println("Account password :"+passwrd);
+        System.out.println(init.accountlist);
+        cid+=11;
+        accno+=110000;
+        addaccount.add_transaction_history("opening",Integer.toString(10000),Integer.toString(10000));
+        addaccount.addpassword();
+    }
+    
+    public void editcustomer(){
+        System.out.println("enter Account No:");
+        int accno = s.nextInt();
+        for(Account a : init.accountlist){
+            if(accno==a.getacc_no()){
+                System.out.println("add new password to secure the account!!:");
+                while(true){
+                    System.out.println("enter password:");
+                    String passwrd1 = s.nextLine();
+                    System.out.println("re-enter password:");
+                    String passwrd2 = s.nextLine();
+                    if(passwrd1.equals(passwrd2)){
+                        if ((checkpass(passwrd1))){
+                            a.setcurrent_password(passwrd2);
+                            System.out.println("Edited successfully!!");
+                            a.addpassword();
+                            break;
+                        }
+                        else{
+                            System.out.println("password is not strong");
+                            System.out.println("so,please reenter the password!!");
+                        }
+                    }
+                    else{
+                        System.out.println("re enter password is incorrect!!");
+                    }
+                }
+            flag=1;   
+            }
+        }
+        if (flag==1){
+            flag=0;
+        }
+        else{
+            System.out.println("ACCOUNT NUMBER IS INCORRECT!!");
+        }    
+    }
+
+    public void deletecustomer(){
+        System.out.println("enter Account No:");
+        int accno=s.nextInt();
+        for(Account a : init.accountlist){
+            if(accno == a.getacc_no()){
+                init.accountlist.remove(a);
+                System.out.println("Account removed successfully!!");
+                flag=1;
+            }      
+        }
+        if (flag==1){
+            flag=0;
+        }
+        else{
+            System.out.println("ACCOUNT NUMBER IS INCORRECT!!");
+        }   
+    }
+
+    public void viewcustomer(){
+        System.out.println("enter Account No:");
+        int accno = s.nextInt();
+        for(Account a : init.accountlist){
+            if (a.getacc_no() == accno){
+                System.out.println("Name :"+a.get_name());
+                System.out.println("Customer id :"+a.getCustomer_id());
+                System.out.println("Account no :"+a.getacc_no());
+                System.out.println("Account balance :"+a.getbalance());
+                flag=1;
+                break;
+            }
+        }
+        if (flag==1){
+            flag=0;
+        }
+        else{
+            System.out.println("ACCOUNT NUMBER IS INCORRECT!!");
+        }   
+    }
+
+    public void withdrwal(){
+        System.out.println("enter Account No:");
+        int Accountno = s.nextInt();
+        System.out.println("enter Amount:");
+        int amount = s.nextInt();
+        s.nextLine();
+        System.out.println("enter password:");
+        String pw = s.nextLine();
+        for( Account acc : init.accountlist){
+            if((Accountno == acc.getacc_no()) && (pw.equals(acc.getcurrent_password()))){
+                int b = acc.getbalance();
+                if(b>=amount && b>=1000){
+                    acc.setbalance(b-amount);
+                    System.out.println("successfully withdrawal!!");
+                    checktransaction(acc);
+                    acc.add_transaction_history("withdrawal", Integer.toString(amount),Integer.toString(b-amount));
+                    acc.increment();
+                    flag=1;       
+                    break;
+                }
+                else{
+                    System.out.println("Insufficient balance");
+                }
+            }
+            flag=1;       
+        }
+        if (flag==1){
+            flag=0;
+        }
+        else{
+            System.out.println("ACCOUNT NUMBER IS INCORRECT!!");
+        }   
+    }
+    public void deposit(){
+        System.out.println("enter Account No:");
+        int Accountn0 = s.nextInt();
+        System.out.println("enter Amount:");
+        int amount = s.nextInt();
+        s.nextLine();
+        System.out.println("enter password:");
+        String pw = s.nextLine();
+        for( Account acc : init.accountlist){
+            if ((acc.getacc_no() == Accountn0) && (pw.equals(acc.getcurrent_password()))){
+                int b =acc.getbalance();
+                acc.setbalance(b+amount);
+                System.out.println("successfully deposited!!");
+                checktransaction(acc);
+                acc.add_transaction_history("deposite", Integer.toString(amount), Integer.toString(b+amount));
+                acc.increment();
+                flag=1;
+                break;
+            }
+        }
+        if (flag==1){
+            flag=0;
+        }
+        else{
+            System.out.println("ACCOUNT NUMBER IS INCORRECT!!");
+        }   
+    }
+    
+    public void transfer(){
+        System.out.println("enter Account No:");
+        int Account = s.nextInt();
+        s.nextLine();
+        System.out.println("enter password:");
+        String pw = s.nextLine();
+        for( Account account : init.accountlist){
+            if((Account == account.getacc_no()) && (pw.equals(account.getcurrent_password()))){
+                int b = account.getbalance();
+                System.out.println("enter the amount");
+                int amount = s.nextInt();
+                if(b>=amount && b>=1000){
+                    if(amount>=5000)
+                        account.setbalance(b-amount-10);
+                    else
+                        account.setbalance(b-amount);
+                    
+                    account.add_transaction_history("Transfer to"+account.getacc_no(), Integer.toString(amount), Integer.toString(b-amount));
+                    System.out.println("enter transfer Account No:");
+                    int transferaccount = s.nextInt();
+                    for( Account a : init.accountlist){
+                        if (a.getacc_no() == transferaccount){
+                            a.transfer(amount);
+                            a.add_transaction_history("transfer from"+a.getacc_no(),Integer.toString(amount), Integer.toString(b+amount));
+                            a.increment();
+                            flag=1;
+                            break;
+                        }
+                    }
+                    if (flag==1){
+                        flag=0;
+                    }
+                    else{
+                        System.out.println("TRANSFER ACCOUNT NUMBER IS INCORRECT!!");
+                        break;
+                    }   
+
+                }
+                else{
+                    System.out.println("there is insufficient balance in your account!!");
+                    break;
+                }
+            }
+            flag=1;
+        }
+        if (flag==1){
+            flag=0;
+        }
+        else{
+            System.out.println("ACCOUNT NUMBER IS INCORRECT!!");
+        }   
+    }
+    void checktransaction(Account cnt){
+        int tc = cnt.get_tc();
+        if (tc%5==0){
+            System.out.println("Transaction limit is exceed, so changing the password.");
+            System.out.println(tc);
+            editcustomer();
+            cnt.addpassword();
+        }
+        if (tc%10==0){
+            cnt.setbalance(cnt.getbalance()-100);
+        }
+    }
+
+    void printtransaction(){
+        System.out.println("enter Account No:");
+        int Accountn0 = s.nextInt();
+        s.nextLine();
+        System.out.println("enter password:");
+        String pw = s.nextLine();
+        for( Account acc : init.accountlist){
+            if ((acc.getacc_no() == Accountn0) && (pw.equals(acc.getcurrent_password()))){
+                System.out.println("trans_id      -+-"+"type     -+-"+"amount       -+-"+"balance     -+-");
+                int i=1;
+                for(String l : acc.gettransaction_history()){
+                    System.out.print(l+"        -+-");
+                    if (i%4 == 0)
+                    System.out.println();
+                    i++;
+                }
+            flag=1;
+            break;
+
+            }
+        }
+        if (flag==1){
+            flag=0;
+        }
+        else{
+            System.out.println("ACCOUNT NUMBER IS INCORRECT!!");
+        }  
+        
+
+    }
+
+    public void show_password_history(){
+        System.out.println("enter Account No:");
+        int Accountn0 = s.nextInt();
+        s.nextLine();
+        System.out.println("enter password:");
+        String pw = s.nextLine();
+        for( Account acc : init.accountlist){
+            if ((acc.getacc_no() == Accountn0) && (pw.equals(acc.getcurrent_password()))){
+                System.out.println("password history");
+                for(String l : acc.getPass_history()){
+                    System.out.println(l);
+                }
+                flag=1;
+                break;
+            }
+        }
+        if (flag==1){
+            flag=0;
+        }
+        else{
+            System.out.println("ACCOUNT NUMBER IS INCORRECT!!");
+        }  
+    }
+
+}
