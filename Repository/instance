@@ -1,0 +1,24 @@
+package banking_sys.Repository;
+import banking_sys.*;
+import banking_sys.DBO.Account;
+import java.util.*;
+
+public class Initialitation {
+
+    public List<Account> accountlist;
+    private Initialitation()
+    {
+        accountlist = new ArrayList<>();
+    }
+    private static Initialitation init;
+
+    public static Initialitation getinstance()
+    {
+        if(init == null)
+        {
+            init = new Initialitation();
+        }
+        return init;
+    }
+    
+}
