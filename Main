@@ -1,3 +1,4 @@
+" Main File - it's contain the main object and call the view class for starting the application, list the content to do.. "
 package banking_sys;
 import banking_sys.Bank_System.*;
 public class Main {
